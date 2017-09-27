@@ -1,6 +1,5 @@
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-    }
-}
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
+
+mod device;
