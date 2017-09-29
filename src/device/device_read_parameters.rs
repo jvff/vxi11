@@ -26,4 +26,8 @@ impl DeviceReadParameters {
     pub fn set_io_timeout(&mut self, io_timeout: u32) {
         self.io_timeout = io_timeout;
     }
+
+    pub fn set_lock_timeout(&mut self, lock_timeout: u32) {
+        self.lock_timeout = lock_timeout;
+    }
 }
