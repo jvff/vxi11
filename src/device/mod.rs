@@ -4,6 +4,7 @@ mod device_flags;
 mod device_error_code;
 mod device_link;
 mod device_write_parameters;
+mod device_write_response;
 
 pub use self::create_link_parameters::CreateLinkParameters;
 pub use self::device_link::DeviceLink;
