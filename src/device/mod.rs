@@ -1,7 +1,8 @@
-mod device_error_code;
-mod device_link;
 mod create_link_parameters;
 mod create_link_response;
+mod device_flags;
+mod device_error_code;
+mod device_link;
 
 pub use self::create_link_parameters::CreateLinkParameters;
 pub use self::device_link::DeviceLink;
