@@ -11,3 +11,15 @@ pub struct DeviceWriteParameters {
     flags: DeviceFlags,
     data: OpaqueData,
 }
+
+impl DeviceWriteParameters {
+    pub fn new(link_id: DeviceLink) -> Self {
+        DeviceWriteParameters {
+            link_id,
+            io_timeout: 0,
+            lock_timeout: 0,
+            flags: DeviceFlags::default(),
+            data: OpaqueData::new(),
+        }
+    }
+}
