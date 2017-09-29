@@ -4,5 +4,11 @@ version = "0.1.0"
 authors = ["Janito Vaqueiro Ferreira Filho <janito.vff@gmail.com>"]
 
 [dependencies]
+error-chain = "0.11"
+futures = "0.1"
+onc-rpc = { git = "file:///tmp/transfer/onc-rpc.git" }
 serde = "1.0"
-serde_derive = "1.0"
+serde_derive ="1.0"
+tokio-core = "0.1"
+tokio-proto = { git = "https://github.com/jvff/tokio-proto.git", branch = "generic_error" }
+tokio-service = "0.1"
