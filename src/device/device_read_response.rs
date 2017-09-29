@@ -8,3 +8,9 @@ pub struct DeviceReadResponse {
     reason: u32,
     data: OpaqueData,
 }
+
+impl DeviceReadResponse {
+    pub fn data(&self) -> &OpaqueData {
+        &self.data
+    }
+}
