@@ -27,4 +27,8 @@ impl DeviceWriteParameters {
         self.data.truncate(0);
         self.data.extend(string.as_bytes().iter());
     }
+
+    pub fn mark_end(&mut self) {
+        self.flags.set_end_indicator(true);
+    }
 }
