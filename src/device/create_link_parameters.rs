@@ -5,3 +5,14 @@ pub struct CreateLinkParameters {
     lock_timeout: u32,
     device: String,
 }
+
+impl CreateLinkParameters {
+    pub fn new() -> Self {
+        CreateLinkParameters {
+            client_id: 0,
+            lock_device: false,
+            lock_timeout: 0,
+            device: "inst0".to_string(),
+        }
+    }
+}
