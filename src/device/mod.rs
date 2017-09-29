@@ -8,9 +8,11 @@ mod device_write_response;
 
 pub use self::create_link_parameters::CreateLinkParameters;
 pub use self::device_link::DeviceLink;
+pub use self::device_write_parameters::DeviceWriteParameters;
 
 use self::create_link_response::CreateLinkResponse;
 use self::device_error_code::DeviceErrorCode;
+use self::device_write_response::DeviceWriteResponse;
 
 onc_rpc! {
     program(core::CoreChannel) {
@@ -23,6 +25,9 @@ onc_rpc! {
                 -> CreateLinkResponse => CreateLinkResult,
             23 => destroy_link(link_id: DeviceLink) -> DeviceErrorCode
                 => DestroyLinkResult,
+
+            11 => device_write(write_parameters: DeviceWriteParameters)
+                -> DeviceWriteResponse => DeviceWriteResult,
         }
     }
 }
