@@ -22,4 +22,9 @@ impl DeviceWriteParameters {
             data: OpaqueData::new(),
         }
     }
+
+    pub fn set_data(&mut self, string: &str) {
+        self.data.truncate(0);
+        self.data.extend(string.as_bytes().iter());
+    }
 }
