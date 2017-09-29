@@ -4,6 +4,7 @@ mod device_flags;
 mod device_error_code;
 mod device_link;
 mod device_read_parameters;
+mod device_read_response;
 mod device_write_parameters;
 mod device_write_response;
 
