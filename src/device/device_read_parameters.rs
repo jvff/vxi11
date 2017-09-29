@@ -22,4 +22,8 @@ impl DeviceReadParameters {
             termination_char: '\0',
         }
     }
+
+    pub fn set_io_timeout(&mut self, io_timeout: u32) {
+        self.io_timeout = io_timeout;
+    }
 }
