@@ -8,3 +8,9 @@ pub struct CreateLinkResponse {
     abort_port: u16,
     max_receive_size: u32,
 }
+
+impl CreateLinkResponse {
+    pub fn link_id(&self) -> DeviceLink {
+        self.link_id
+    }
+}
