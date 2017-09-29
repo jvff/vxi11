@@ -12,4 +12,8 @@ extern crate tokio_core;
 extern crate tokio_proto;
 extern crate tokio_service;
 
+mod device;
+
 pub mod rpc;
+
+pub use self::device::Device;
