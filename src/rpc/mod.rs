@@ -8,15 +8,16 @@ mod device_read_response;
 mod device_write_parameters;
 mod device_write_response;
 
-pub use self::create_link_parameters::CreateLinkParameters;
 pub use self::device_error_code::DeviceErrorCode;
 pub use self::device_link::DeviceLink;
+
+pub use self::create_link_parameters::CreateLinkParameters;
 pub use self::device_read_parameters::DeviceReadParameters;
 pub use self::device_write_parameters::DeviceWriteParameters;
 
-use self::create_link_response::CreateLinkResponse;
-use self::device_read_response::DeviceReadResponse;
-use self::device_write_response::DeviceWriteResponse;
+pub use self::create_link_response::CreateLinkResponse;
+pub use self::device_read_response::DeviceReadResponse;
+pub use self::device_write_response::DeviceWriteResponse;
 
 onc_rpc! {
     program(core::CoreChannel) {
