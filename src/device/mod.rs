@@ -4,6 +4,7 @@ use futures::future::*;
 use onc_rpc;
 use tokio_core::reactor::Handle;
 
+use self::write::DeviceWrite;
 use super::rpc::*;
 
 pub struct Device {
@@ -136,6 +137,23 @@ impl Device {
     ) -> Self {
         this
     }
+
+    pub fn write<'s>(self, string: &'s str) -> Flatten<DeviceWrite<'s>> {
+        DeviceWrite::new(self, string).flatten()
+    }
+
+    fn raw_write(&mut self, string: &str) -> DeviceWriteResult {
+        let link_id = self.link_id
+            .expect("link to device should have been opened");
+
+        let mut parameters = DeviceWriteParameters::new(link_id);
+
+        parameters.set_data(string);
+        parameters.mark_end();
+
+        self.core_channel.device_write(parameters)
+    }
 }
 
 mod future_cell;
+mod write;
