@@ -57,6 +57,7 @@ type Read =
         FutureResult<Device, onc_rpc::Error>,
         Map<DeviceReadResult, GetReadDataFn>,
     >;
+type Ask<'s> = AndThen<Flatten<DeviceWrite<'s>>, Read, ReadFn>;
 
 type CreateLinkFn = fn(Device) -> CreateLink;
 type SetLinkIdFn = fn((Device, CreateLinkResponse)) -> Device;
@@ -65,6 +66,7 @@ type ReturnSelfAfterLinkIsDestroyedFn = fn((Device, DeviceErrorCode)) -> Device;
 type ErrorIntoResultFn = fn(onc_rpc::Error) -> Result<Device, onc_rpc::Error>;
 type ResultIntoFutureFn =
     fn(Result<Device, onc_rpc::Error>) -> FutureResult<Device, onc_rpc::Error>;
+type ReadFn = fn(Device) -> Read;
 type GetReadDataFn = fn(DeviceReadResponse) -> Vec<u8>;
 
 impl Device {
@@ -180,6 +182,11 @@ impl Device {
 
     fn get_read_data(read_response: DeviceReadResponse) -> Vec<u8> {
         read_response.into_data().into()
+    }
+
+    pub fn ask<'s>(self, command: &'s str) -> Ask {
+        self.write(command)
+            .and_then(Self::read)
     }
 }
 
