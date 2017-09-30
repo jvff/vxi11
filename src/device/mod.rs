@@ -20,6 +20,21 @@ impl From<CoreChannel> for Device {
     }
 }
 
+type OpenLink =
+    OrElse<
+        Map<
+            AndThen<CheckIfLinkIsClosed, CreateLink, CreateLinkFn>,
+            SetLinkIdFn,
+        >,
+        FutureResult<Device, onc_rpc::Error>,
+        ResultIntoFutureFn,
+    >;
+type CheckIfLinkIsClosed = FutureResult<Device, Result<Device, onc_rpc::Error>>;
+type CreateLink =
+    MapErr<
+        Join<FutureResult<Device, onc_rpc::Error>, CreateLinkResult>,
+        ErrorIntoResultFn,
+    >;
 type CloseLink =
     OrElse<
         AndThen<GetLinkId, DestroyLink, DestroyLinkFn>,
@@ -37,6 +52,8 @@ type DestroyLink =
         ErrorIntoResultFn,
     >;
 
+type CreateLinkFn = fn(Device) -> CreateLink;
+type SetLinkIdFn = fn((Device, CreateLinkResponse)) -> Device;
 type DestroyLinkFn = fn((Device, DeviceLink)) -> DestroyLink;
 type ReturnSelfAfterLinkIsDestroyedFn = fn((Device, DeviceErrorCode)) -> Device;
 type ErrorIntoResultFn = fn(onc_rpc::Error) -> Result<Device, onc_rpc::Error>;
@@ -50,6 +67,40 @@ impl Device {
     ) -> Map<CoreChannelConnect, fn(CoreChannel) -> Device> {
         CoreChannel::connect(address, handle)
             .map(Device::from)
+    }
+
+    pub fn open_link(self) -> OpenLink {
+        self.check_if_link_is_closed()
+            .and_then(Self::create_link as CreateLinkFn)
+            .map(Self::set_link_id as SetLinkIdFn)
+            .or_else(Result::into_future)
+    }
+
+    fn check_if_link_is_closed(self) -> CheckIfLinkIsClosed {
+        if self.link_id.is_some() {
+            Err(Ok(self)).into_future()
+        } else {
+            Ok(self).into_future()
+        }
+    }
+
+    fn create_link(this: Self) -> CreateLink {
+        let create_link =
+            this.core_channel.create_link(CreateLinkParameters::new());
+
+        Ok(this)
+            .into_future()
+            .join(create_link)
+            .map_err(Err)
+    }
+
+    fn set_link_id(
+        (mut this, create_link_result): (Self, CreateLinkResponse),
+    ) -> Self {
+        this.link_id = Some(create_link_result.link_id());
+
+        this
+    }
 
     pub fn close_link(self) -> CloseLink {
         self.get_link_id()
