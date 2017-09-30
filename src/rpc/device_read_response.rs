@@ -13,4 +13,8 @@ impl DeviceReadResponse {
     pub fn data(&self) -> &OpaqueData {
         &self.data
     }
+
+    pub fn into_data(self) -> OpaqueData {
+        self.data
+    }
 }
