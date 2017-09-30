@@ -52,6 +52,11 @@ type DestroyLink =
         >,
         ErrorIntoResultFn,
     >;
+type Read =
+    Join<
+        FutureResult<Device, onc_rpc::Error>,
+        Map<DeviceReadResult, GetReadDataFn>,
+    >;
 
 type CreateLinkFn = fn(Device) -> CreateLink;
 type SetLinkIdFn = fn((Device, CreateLinkResponse)) -> Device;
@@ -60,6 +65,7 @@ type ReturnSelfAfterLinkIsDestroyedFn = fn((Device, DeviceErrorCode)) -> Device;
 type ErrorIntoResultFn = fn(onc_rpc::Error) -> Result<Device, onc_rpc::Error>;
 type ResultIntoFutureFn =
     fn(Result<Device, onc_rpc::Error>) -> FutureResult<Device, onc_rpc::Error>;
+type GetReadDataFn = fn(DeviceReadResponse) -> Vec<u8>;
 
 impl Device {
     pub fn connect(
@@ -152,6 +158,28 @@ impl Device {
         parameters.mark_end();
 
         self.core_channel.device_write(parameters)
+    }
+
+    pub fn read(self) -> Read {
+        let link_id = self.link_id
+            .expect("link to device should have been opened");
+
+        let mut parameters = DeviceReadParameters::new(link_id, 100);
+
+        parameters.set_io_timeout(1000);
+        parameters.set_lock_timeout(1000);
+
+        let device_read = self.core_channel
+            .device_read(parameters)
+            .map(Self::get_read_data as GetReadDataFn);
+
+        Ok(self)
+            .into_future()
+            .join(device_read)
+    }
+
+    fn get_read_data(read_response: DeviceReadResponse) -> Vec<u8> {
+        read_response.into_data().into()
     }
 }
 
