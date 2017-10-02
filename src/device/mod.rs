@@ -166,7 +166,7 @@ impl Device {
         let link_id = self.link_id
             .expect("link to device should have been opened");
 
-        let mut parameters = DeviceReadParameters::new(link_id, 100);
+        let mut parameters = DeviceReadParameters::new(link_id, 100000);
 
         parameters.set_io_timeout(1000);
         parameters.set_lock_timeout(1000);
